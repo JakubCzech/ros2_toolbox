@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  visualization:
+    image: ghcr.io/jakubczech/ros2_toolbox:main
+    privileged: true
+    network_mode: host
+    hostname: agv
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - ./src/ros2_toolbox/config/:/root/workspace/install/ros2_toolbox/share/ros2_toolbox/config/:rw
+
+  rviz2:
+    extends:
+      service: visualization
+    entrypoint: bash -c "source install/setup.bash && ros2 launch ros2_toolbox rviz.launch.py"
+
+  rqt:
+    extends:
+      service: visualization
+    entrypoint: bash -c "source install/setup.bash && ros2 launch ros2_toolbox rqt.launch.py"
+
+  plot_juggler:
+    extends:
+      service: visualization
+    entrypoint: bash -c "source install/setup.bash && ros2 launch ros2_toolbox plot_juggler.launch.py"
+
+  robot_sterring:
+    extends:
+      service: visualization
+    entrypoint: bash -c "source install/setup.bash && rqt_robot_steering"
